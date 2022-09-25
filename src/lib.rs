@@ -65,12 +65,12 @@ impl Block {
 fn indent(s: &str) -> String {
     let mut out = String::new();
     for part in s.lines() {
-        if part != "" {
+        if !part.is_empty() {
             out.push_str("    ");
             out.push_str(part);
-            out.push_str("\n");
+            out.push('\n');
         } else {
-            out.push_str("\n");
+            out.push('\n');
         }
     }
     out
@@ -82,7 +82,7 @@ impl fmt::Display for Elem {
             Elem::Structure(name, blk) => {
                 f.write_str("STRUCTURE ")?; 
                 f.write_str(name)?;
-                if blk.elems.len() != 0 {
+                if !blk.elems.is_empty() {
                     f.write_str(" {\n")?;
                     let s = format!("{}", blk);
                     f.write_str(&indent(&s))?;
@@ -92,7 +92,7 @@ impl fmt::Display for Elem {
             Elem::Attribute(name, blk) => { 
                 f.write_str("ATTRIBUTE ")?; 
                 f.write_str(name)?;
-                if blk.elems.len() != 0 {
+                if !blk.elems.is_empty() {
                     f.write_str(" {\n")?;
                     let s = format!("{}", blk);
                     f.write_str(&indent(&s))?;
@@ -108,7 +108,7 @@ impl fmt::Display for Elem {
 impl fmt::Display for Block {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         for e in &self.elems {
-            write!(f, "{}\n", e)?;
+            writeln!(f, "{}", e)?;
         }
         Ok(())
     }
@@ -202,7 +202,7 @@ fn parse_manynl<'a, E: ParseError<&'a S>>(inp: &'a S) -> IResult<&'a S, (), E> {
     fold_many1(
         parse_nl,
         (),
-        |_, _item| { () })(inp)
+        |_, _item| {})(inp)
 }
 
 fn parse_elem<'a, E: ParseError<&'a S>>(inp: &'a S) -> IResult<&'a S, Elem, E> {
@@ -251,7 +251,7 @@ pub fn parse_conf_opt(inp: &S) -> Result<Block, ConfError> {
         Ok((_rest, block)) => Ok(block),
         Err(e) => {
             //println!("ERROR =======\n{}", convert_error(inp, e));
-            Err(ConfError{ parser_err: convert_error(inp, e).to_string() })
+            Err(ConfError{ parser_err: convert_error(inp, e) })
         }
     }
 }
