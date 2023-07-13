@@ -201,7 +201,7 @@ fn parse_structure<'a, E: ParseError<&'a S>>(inp: &'a S) -> IResult<&'a S, Elem,
 fn parse_manynl<'a, E: ParseError<&'a S>>(inp: &'a S) -> IResult<&'a S, (), E> {
     fold_many1(
         parse_nl,
-        (),
+        || {()},
         |_, _item| {})(inp)
 }
 
@@ -220,7 +220,7 @@ fn parse_elem<'a, E: ParseError<&'a S>>(inp: &'a S) -> IResult<&'a S, Elem, E> {
 fn parse_blk<'a, E: ParseError<&'a S>>(inp: &'a S) -> IResult<&'a S, Block, E> {
     map(fold_many0(
         parse_elem,
-        Vec::new(),
+        || {Vec::new()},
         |mut vec: Vec<Elem>, item| {
             vec.push(item);
             vec
