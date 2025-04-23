@@ -4,7 +4,7 @@ use std::fmt;
 use nom::{
   IResult, Finish,
   error::{ParseError, VerboseError, convert_error},
-  bytes::complete::{tag, take_while, take_while1, is_a, is_not},
+  bytes::complete::{tag, take_while, take_while1, is_a},
   combinator::{opt, all_consuming, map, recognize},
   branch::alt,
   multi::{fold_many0, fold_many1},
@@ -132,8 +132,8 @@ fn parse_nl<'a, E: ParseError<&'a S>>(inp: &'a S) -> IResult<&'a S, &'a S, E> {
 
 fn parse_str<'a, E: ParseError<&'a S>>(inp: &'a S) -> IResult<&'a S, &'a S, E> {
     alt((
-        delimited(tag("\""), is_not("\""), tag("\"")),
-        delimited(tag("'"),  is_not("'"),  tag("'")),
+        delimited(tag("\""), take_while(|c: char| c != '"'), tag("\"")),
+        delimited(tag("'"),  take_while(|c: char| c != '\''),  tag("'")),
         take_while1(|c: char| {c != ' ' && c != '#' && c != '\t' && c != '\n'}
     )))(inp)
 }
