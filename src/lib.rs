@@ -60,6 +60,18 @@ impl Block {
         }
         None
     }
+
+    pub fn attrnames_in_order(&self) -> Vec<&str> {
+        self.elems.iter().filter_map(|e| match e {
+                Elem::Attribute(name, _) => Some(name.as_str()), _ => None })
+            .collect()
+    }
+
+    pub fn structnames_in_order(&self) -> Vec<&str> {
+        self.elems.iter().filter_map(|e| match e {
+                Elem::Structure(name, _) => Some(name.as_str()), _ => None })
+            .collect()
+    }
 }
 
 fn indent(s: &str) -> String {
